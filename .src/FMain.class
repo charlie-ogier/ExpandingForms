@@ -1,0 +1,179 @@
+' Gambas class file
+
+''RASPBERRY PI 2 WITH GAMBAS 3.5.4
+'If you want to run this on the Pi you need to open this project in Gambas on the Pi and then do the following
+'1/. Go to Project>Refresh
+'2/. Go to Project>Clean up and select 'Clean'
+'3/. Go to the 'About' Form and change 'ButtonDone' Text property to &Done
+'4/. Go to the 'FMain' Form and change 'ToolButtonNext' Text property to &Next and the 'ToolButtonBack' Text property to &Back 
+'The program should now run
+
+Public Sub Form_Open()
+Dim siSlideNumber As Short                                          'To store the 'Slide' number
+
+LabelVersion.text = "Version 0.1.0"                                 'Version number
+
+If Not IsNull(Settings["FMain/Geometry"]) Then                      'If the last saved form size and position Setting exist then
+  Settings.Read(Me)                                                 'Get the last saved form size and position and apply
+Endif 
+
+If Val(Settings["SlideNo"]) = Null Or Settings["SlideNo"] = "1" Then 'If there is no Setting for the last 'Slide' number saved or it's 'Slide' 1 then..
+  siSlideNumber = 1                                                 'Set the siSlideNumber variable to 1
+  WhichSlide(1)                                                     'Start 'Slide' 1
+Else                                                                'Else...
+  siSlideNumber = Val(Settings["SlideNo"])                          'Put the saved 'Slide' number in siSlideNumber
+  WhichSlide(siSlideNumber)                                         'Start the relevant 'Slide'
+  BackandNext_Click(True)                                           'Run part of this routine to make sure the 'Next' and 'Back' buttons are displayed or hidden as needed 
+Endif
+
+If siSlideNumber = 1 Then                                           'If we are starting with 'Slide' 1 then...
+  SetForm                                                           'Sets the form size and position to start the 'Expand' sequence
+  HBoxNavigation.Visible = False                                    'Hide the navigation controls
+  Timer1.Start                                                      'Start the timer that expands the form
+End If
+
+End
+
+Public Sub WhichSlide(siSlideNow As Short)                          'Which slide to create, pass the necessary details to 'SlideControl'
+Dim sTemp, sText As String                                          'Temporary string (sTemp) and Tutorial text to display (sText)
+Dim sSplit As String[]                                              'To hold the sText when it has been split by the Newline character '\n'
+Dim siCount As Short                                                'Counter
+                                                                    
+sText = File.Load("../TutorialText.txt")                            'Open the file with the Tutorial text
+sSplit = Split(sText, "\n")                                         'Split the text into an array (sSplit) by the Newline character '\n'
+
+For Each sTemp In sSplit                                            'Loop
+  Inc siCount                                                       'Increase the value of siCount
+  sText = sTemp                                                     'Pass the text in sTemp to sText
+  If siCount = siSlideNow Then Break                                'If the loop has reached the correct 'Slide' then sText holds the correct text so exit the loop
+Next
+                                                               
+Select Case siSlideNow                                              'Based on the above create the choosen slide
+  Case 1
+    SlideControl(1, True, 15, 3, True, 1, sText)                    'Create slide number, Text bold or not, Font size, Align left (1) or Centre (3), Stretch Picture, Align Picture, Tutorial Text
+  Case 2
+    SlideControl(2, True, 15, 3, True, 1, sText)                   'Create slide number, Text bold or not, Font size, Align left (1) or Centre (3), Stretch Picture, Align Picture, Tutorial Text
+  Case 3
+    SlideControl(3, False, 10, 1, True, 1, sText)                   'Create slide number, Text bold or not, Font size, Align left (1) or Centre (3), Stretch Picture, Align Picture, Tutorial Text
+  Case Else
+    SlideControl(siSlideNow, False, 10, 1, False, 3, sText)         'Create slide number, Text bold or not, Font size, Align left (1) or Centre (3), Stretch Picture, Align Picture, Tutorial Text
+  End Select
+
+End
+
+Public Sub SlideControl(siSlide As Short, bBold As Boolean, siFont As Short, siAlign As Short, bStretch As Boolean, siPictureAlign As Short, sText As String) 'Main 'Slide' control
+
+With TextLabelHeader                                                'Setup 'TextHeader'
+  .Font.Bold = bBold                                                'Set font bold or not
+  .Font.Size = siFont                                               'Set the font size
+  .Alignment = siAlign                                              'Set the font alignment
+  .text = sText                                                     'Display the Tutorial text
+End With
+
+With PictureBox1                                                    'Setup PictureBox
+  .Picture = Picture.Load("../Slide" & Str(siSlide) & ".png")       'Load correct picture
+  .Stretch = bStretch                                               'Stretch image or not
+  .Alignment = siPictureAlign                                       'Align picture left or centre
+End With
+
+LabelSlideNumber.text = "Slide " & Str(siSlide)                     'Display the 'Slide' number
+
+End
+
+Public Sub BackandNext_Click(Optional bTrigger As Boolean)          'Control for Next and Back buttons
+Dim siMax As Short = 11                                             'Total number of slides
+Dim siSlideNow As Short                                             'To hold the number of the slide showing
+
+siSlideNow = Val(Trim(Right(LabelSlideNumber.text, 2)))             'Get the slide number from the Label 'LabelSlideNumber'
+
+If Not bTrigger Then                                                'Don't run this if this routine is called due to there being a saved 'Slide' to go to
+  If Last.tag = 0 Then                                              'Find the Tag property of the key pressed
+    If siSlideNow > 1 Then Dec siSlideNow                           'If it was 'Back' decrease the value of siSildeNow if prudent
+  Else
+    If siSlideNow < siMax Then Inc siSlideNow                       'If it was 'Next' increase the value of siSildeNow if prudent
+  Endif
+Endif
+
+If siSlideNow = siMax Then                                          'If the 'slide' is the last slide then.. 
+  ToolButtonNext.Enabled = False                                    'Disable the 'Next' button
+Else                                                                'If the 'slide' is NOT the last slide then..
+ToolButtonNext.Enabled = True                                       'Enable the 'Next' button
+End If
+
+If siSlideNow <= 1 Then                                             'If the 'slide' is the first slide then..
+  ToolButtonBack.Enabled = False                                    'Disable the 'Back' button
+Else                                                                'If the 'slide' is NOT the first slide then..
+  ToolButtonBack.Enabled = True                                     'Enable the 'Back' button
+End If
+
+If bTrigger Then Return                                             'Return if this routine is called due to there being a saved 'Slide' to go to
+
+WhichSlide(siSlideNow)                                              'Based on the above pass the value to WhichSlide
+
+End
+
+Public Sub SetForm()                                                'Sets the form size to start the 'Expand' sequence
+
+Me.X = Desktop.W / 4                                                'Work out where to place the Form
+Me.Y = ((Desktop.W / 2) / 1.2) - (Desktop.h / 2)                    'Work out where to place the Form
+Me.W = 250                                                          'Set the width of the form
+Me.H = 100                                                          'Set the height of the form
+
+End
+
+Public Sub Form_Resize()                                            'Displays the width and height of the form in the Label 'LabelHandW' when the form is resized
+
+LabelHandW.Text = "Form width = " & Str(Me.W) & "    Form height = " & Str(Me.H)
+ 
+End
+
+Public Sub Timer1_Timer()                                           'Timer to control the expanding form on opening the program
+
+Inc Me.W                                                            'Increase the width of the form 
+Inc Me.H                                                            'Increase the height of the form 
+
+If Me.W = 500
+  HBoxNavigation.H = 1                                              'Set the HBox HBoxNavigation to a height of 1
+  HBoxNavigation.Visible = True                                     'Show the HBox HBoxNavigation (navigation controls)
+  Timer2.Start                                                      'Start Timer 2
+Endif
+
+If Me.W = Desktop.W / 2 Then                                        'When the width of the form = half the width of the screen then..
+  Timer1.Stop                                                       'Stop the timer
+End If
+
+End
+
+Public Sub Timer2_Timer()                                           'To increase the size of HBoxNavigation
+
+Inc HBoxNavigation.H                                                'Increase the size of HBoxNavigation
+If HBoxNavigation.H = 32 Then Timer2.Stop                           'If the HBox is big enough then stop
+
+End
+
+Public Sub ToolButtonStart_Click()                                  'To rerun the opening 'Expand' sequence
+
+SetForm                                                             'Sets the form size to start the 'Expand' sequence
+Timer1.Start                                                        'Start the timer that expands the form 
+
+End
+
+Public Sub ToolButtonAbout_Click()                                  'What to do if the 'About' button is clicked
+
+About.ShowModal                                                     'Show the 'About' form
+
+End
+
+Public Sub ToolButtonExit_Click()                                   'Bye bye
+
+Form_Close                                                          'Go to the Form_Close() routine
+
+End
+
+Public Sub Form_Close()
+
+Settings["SlideNo"] = Trim(Right(LabelSlideNumber.text, 2))         'Save the present 'Slide' number
+Settings.Write(Me)                                                  'Save the size and postion of the form
+Me.Close                                                            'Close the form
+ 
+End

@@ -1,0 +1,26 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,115,72)
+  Text = ("About")
+  Arrangement = Arrange.Vertical
+  Padding = 2
+  { Label1 TextLabel
+    MoveScaled(4,3,106,55)
+    Expand = True
+    Padding = 2
+    Text = ("<div align=center><big><b>Expanding Forms<p>\n\nThe basics of creating expanding forms in Gambas</big></b><div align=left><p>\n\nWritten in February 2016<p>\n\nTested on Linux Mint 17.3 Cinnamon, Linux Mint 17.3 Mate and the Rapberry Pi 2 with Gambas 3.5.4.<p>\n\nThe 'Expand' sequence can be prevented from starting by closing the program while any 'Slide' except 'Slide' 1 is showing<p>\n\n<b>RASPBERRY PI 2 WITH GAMBAS 3.5.4</b><br>\nIf you want to run this on the Pi you need to open this project in Gambas on the Pi and then do the following<br>\n1/. Go to Project>Refresh<br>\n2/. Go to Project>Clean up and select 'Clean'<br>\n3/. Go to the 'About' Form and change 'ButtonDone' Text property to &Done<br>\n4/. Go to the 'FMain' Form and change 'ToolButtonNext' Text property to &Next and the 'ToolButtonBack' Text property to &Back <br>\nThe program should now run<p>\n\nCopyright (C) Charlie Ogier 2016<br>\nAny comments or bugs please email bugs@cogier.com<p>\n\nThis program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.<p>\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. Write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA\n")
+  }
+  { HBox1 HBox
+    MoveScaled(3,58,48,4)
+    { Panel1 Panel
+      MoveScaled(8,1,16,2)
+      Expand = True
+    }
+    { ButtonDone Button
+      MoveScaled(33,1,14,3)
+      ToolTip = ("Close this form")
+      Text = Shortcut(("Done"), "D")
+    }
+  }
+}

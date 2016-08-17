@@ -1,0 +1,18 @@
+# Gambas Project File 3.0
+# Compiled with Gambas 3.8.4
+Title=Expanding Forms
+Startup=FMain
+Icon=ProgramIcon.png
+Version=0.1.1
+Component=gb.image
+Component=gb.qt4
+Component=gb.form
+Component=gb.settings
+Description="The basics of creating expanding forms in Gambas"
+Authors="Charlie Ogier (C) 2016"
+TabSize=2
+Language=en_US
+CreateShortcut=1
+Vendor=cogier
+Packager=1
+Tags=Development,Education,Example,Presentation
