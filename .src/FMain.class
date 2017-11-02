@@ -1,17 +1,11 @@
 ' Gambas class file
 
-''RASPBERRY PI 2 WITH GAMBAS 3.5.4
-'If you want to run this on the Pi you need to open this project in Gambas on the Pi and then do the following
-'1/. Go to Project>Refresh
-'2/. Go to Project>Clean up and select 'Clean'
-'3/. Go to the 'About' Form and change 'ButtonDone' Text property to &Done
-'4/. Go to the 'FMain' Form and change 'ToolButtonNext' Text property to &Next and the 'ToolButtonBack' Text property to &Back 
-'The program should now run
+Public sVideoToPlay As String                                       'To store the video to play
 
 Public Sub Form_Open()
 Dim siSlideNumber As Short                                          'To store the 'Slide' number
 
-LabelVersion.text = "Version 0.1.0"                                 'Version number
+LabelVersion.text = "Version 0.2.0"                                 'Version number
 
 If Not IsNull(Settings["FMain/Geometry"]) Then                      'If the last saved form size and position Setting exist then
   Settings.Read(Me)                                                 'Get the last saved form size and position and apply
@@ -38,21 +32,20 @@ Public Sub WhichSlide(siSlideNow As Short)                          'Which slide
 Dim sTemp, sText As String                                          'Temporary string (sTemp) and Tutorial text to display (sText)
 Dim sSplit As String[]                                              'To hold the sText when it has been split by the Newline character '\n'
 Dim siCount As Short                                                'Counter
-                                                                    
-sText = File.Load("../TutorialText.txt")                            'Open the file with the Tutorial text
-sSplit = Split(sText, "\n")                                         'Split the text into an array (sSplit) by the Newline character '\n'
+
+sSplit = Split(File.Load("../TutorialText.txt"), gb.NewLine)        'Open the file with the Tutorial text and split the text into an array (sSplit) by the Newline character
 
 For Each sTemp In sSplit                                            'Loop
   Inc siCount                                                       'Increase the value of siCount
   sText = sTemp                                                     'Pass the text in sTemp to sText
   If siCount = siSlideNow Then Break                                'If the loop has reached the correct 'Slide' then sText holds the correct text so exit the loop
 Next
-                                                               
+
 Select Case siSlideNow                                              'Based on the above create the choosen slide
   Case 1
     SlideControl(1, True, 15, 3, True, 1, sText)                    'Create slide number, Text bold or not, Font size, Align left (1) or Centre (3), Stretch Picture, Align Picture, Tutorial Text
   Case 2
-    SlideControl(2, True, 15, 3, True, 1, sText)                   'Create slide number, Text bold or not, Font size, Align left (1) or Centre (3), Stretch Picture, Align Picture, Tutorial Text
+    SlideControl(2, True, 15, 3, True, 1, sText)                    'Create slide number, Text bold or not, Font size, Align left (1) or Centre (3), Stretch Picture, Align Picture, Tutorial Text
   Case 3
     SlideControl(3, False, 10, 1, True, 1, sText)                   'Create slide number, Text bold or not, Font size, Align left (1) or Centre (3), Stretch Picture, Align Picture, Tutorial Text
   Case Else
@@ -97,7 +90,7 @@ Endif
 If siSlideNow = siMax Then                                          'If the 'slide' is the last slide then.. 
   ToolButtonNext.Enabled = False                                    'Disable the 'Next' button
 Else                                                                'If the 'slide' is NOT the last slide then..
-ToolButtonNext.Enabled = True                                       'Enable the 'Next' button
+  ToolButtonNext.Enabled = True                                     'Enable the 'Next' button
 End If
 
 If siSlideNow <= 1 Then                                             'If the 'slide' is the first slide then..
@@ -176,4 +169,39 @@ Settings["SlideNo"] = Trim(Right(LabelSlideNumber.text, 2))         'Save the pr
 Settings.Write(Me)                                                  'Save the size and postion of the form
 Me.Close                                                            'Close the form
  
+End
+
+Public Sub ToolButtonPlayVideo_Click()                                            'What to do if the video button is clicked
+Dim siEnd As Short = Val(Right(LabelSlideNumber.Text, 2))                         'Get the numbber of the slide
+Dim sVideo As String                                                              'To hold the video name
+Dim bPlay As Boolean = True                                                       'To play or not to play that is the question........
+
+Select Case siEnd                                                                 'To decide which video to play
+  Case 3, 4                                                                       'If looking at Slide 3 or 4 then..
+    sVideo = "video3-4.webm"                                                      'Video name is..
+  Case 5, 6                                                                       'If looking at Slide 5 or 6 then..
+    sVideo = "video5-6.webm"                                                      'Video name is..
+  Case 7                                                                          'If looking at Slide 7
+    sVideo = "video7.webm"                                                        'Video name is..
+  Case 8                                                                          'If looking at Slide 8
+    sVideo = "video8.webm"                                                        'Video name is..
+  Case 9                                                                          'If looking at Slide 9
+    sVideo = "video9.webm"                                                        'Video name is..
+  Case 10                                                                         'If looking at Slide 10
+    sVideo = "video10.webm"                                                       'Video name is..
+  Case 11                                                                         'If looking at Slide 11
+    sVideo = "video11.webm"                                                       'Video name is..
+  Case Else
+    bPlay = False                                                                 'There is nothing to play..
+    Message.Info("Sorry there is no video for this slide\nThere are videos for slides 3 to 11 inclusive", "OK") 'So tell them there is nothing to play..
+End Select
+
+If Not bPlay Then Return                                                          'If there is no video to play then get out of here!
+
+If Not Exist("/tmp/" &/ sVideo) Then Copy "../" &/ sVideo To "/tmp/" &/ sVideo    'If the video to play is not in the /tmp folder then put it there
+sVideoToPlay = "/tmp/" &/ sVideo                                                  'Set the global variable to the name of the video to play
+Me.Hide                                                                           'Hide this form
+FVideo.ShowModal                                                                  'Show the FVideo form
+Me.Show                                                                           'Show this form
+
 End

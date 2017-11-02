@@ -1,0 +1,24 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,31,20)
+  Maximized = True
+  Arrangement = Arrange.Vertical
+  Padding = 5
+  { MediaViewVideo MediaView
+    MoveScaled(2,1,26,11)
+    Expand = True
+    Border = False
+  }
+  { HBox2 HBox
+    MoveScaled(0,15,28,4)
+    { Panel2 Panel
+      MoveScaled(2,1,4,2)
+      Expand = True
+    }
+    { ButtonClose Button
+      MoveScaled(7,0,11,4)
+      Text = Shortcut(("Close"), "C")
+    }
+  }
+}

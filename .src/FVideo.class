@@ -1,0 +1,14 @@
+' Gambas class file
+
+Public Sub Form_Open()
+
+MediaViewVideo.URL = Media.URL(FMain.sVideoToPlay)  'You need to put the file path through 'Media.URL' which converts it to a URL so that 'MediaViewVideo.URL' is read as a URL
+MediaViewVideo.Play                                 'Play the movie
+
+End
+
+Public Sub ButtonClose_Click()                      'When the 'Close' button is clicked
+
+Me.Close                                            'Close the form
+
+End

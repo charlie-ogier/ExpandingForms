@@ -18,13 +18,18 @@
       ToolTip = ("Rerun the opening 'Expand' sequence")
       Picture = Picture["icon:/32/redo"]
     }
+    { ToolButtonPlayVideo ToolButton
+      MoveScaled(13,0,4,4)
+      ToolTip = ("If there is a video for this slide clicking this button will play it")
+      Picture = Picture["icon:/32/video"]
+    }
     { ToolButtonExit ToolButton
-      MoveScaled(12,0,4,4)
+      MoveScaled(18,0,4,4)
       ToolTip = ("Exit - bye bye!\nIf you close on a 'Slide' when\nyou reopen the same 'Slide' \nwill be displayed")
       Picture = Picture["icon:/32/close"]
     }
     { Panel1 Panel
-      MoveScaled(17,1,11,2)
+      MoveScaled(23,1,5,2)
     }
     { Panel6 Panel
       MoveScaled(31,1,7,3)
@@ -42,7 +47,7 @@
     }
     { ToolButtonBack ToolButton BackandNext
       Name = "ToolButtonBack"
-      MoveScaled(64,0,10,3)
+      MoveScaled(63,1,10,3)
       Enabled = False
       Tag = "0"
       ToolTip = ("Takes you to the last 'Slide'")
@@ -54,7 +59,7 @@
     }
     { ToolButtonNext ToolButton BackandNext
       Name = "ToolButtonNext"
-      MoveScaled(76,0,10,4)
+      MoveScaled(78,0,10,4)
       ToolTip = ("Takes you to the next 'Slide'")
       Text = Shortcut(("Next"), "N")
       Picture = Picture["icon:/32/next"]
